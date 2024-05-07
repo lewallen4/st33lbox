@@ -8,5 +8,5 @@ echo ""
 echo ""
 echo "first login as sudo"
 sudo apt-get install ufw
-sudo python st33l.py
+sudo python3 st33l.py
 echo "bye!"
