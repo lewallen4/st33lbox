@@ -55,6 +55,34 @@ def harden_vm():
         f.write("#$#$#$#$#$ HTTPS connections allowed.\n")
 
     with open(log_file, "a") as f:
+        f.write("#$#$#$#$#$ Allowing outbound SSH (port 22) connections...\n")
+    result = subprocess.run(["ufw", "allow", "out", "22"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    with open(log_file, "a") as f:
+        f.write(result.stdout + "\n")
+        f.write("#$#$#$#$#$ SSH outbound connections allowed.\n")
+        
+    with open(log_file, "a") as f:
+        f.write("#$#$#$#$#$ Allowing outbound Git (port 9418) connections...\n")
+    result = subprocess.run(["ufw", "allow", "out", "9418"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    with open(log_file, "a") as f:
+        f.write(result.stdout + "\n")
+        f.write("#$#$#$#$#$ Git outbound connections allowed.\n")
+
+    with open(log_file, "a") as f:
+        f.write("#$#$#$#$#$ Allowing outbound HTTP (port 80) connections...\n")
+    result = subprocess.run(["ufw", "allow", "out", "80"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    with open(log_file, "a") as f:
+        f.write(result.stdout + "\n")
+        f.write("#$#$#$#$#$ HTTP outbound connections allowed.\n")
+
+    with open(log_file, "a") as f:
+        f.write("#$#$#$#$#$ Allowing outbound HTTPS (port 443) connections...\n")
+    result = subprocess.run(["ufw", "allow", "out", "443"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    with open(log_file, "a") as f:
+        f.write(result.stdout + "\n")
+        f.write("#$#$#$#$#$ HTTPS outbound connections allowed.\n")
+
+    with open(log_file, "a") as f:
         f.write("#$#$#$#$#$ Enabling firewall...\n")
     result = subprocess.run(["ufw", "enable"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     with open(log_file, "a") as f:
