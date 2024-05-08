@@ -29,6 +29,13 @@ def harden_vm():
     with open(log_file, "a") as f:
         f.write(result.stdout + "\n")
         f.write("#$#$#$#$#$ SSH connections allowed.\n")
+        
+    with open(log_file, "a") as f:
+        f.write("#$#$#$#$#$ Allowing Git (port 9418) connections...\n")
+    result = subprocess.run(["ufw", "allow", "9418"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    with open(log_file, "a") as f:
+        f.write(result.stdout + "\n")
+        f.write("#$#$#$#$#$ Git connections allowed.\n")
 
     with open(log_file, "a") as f:
         f.write("#$#$#$#$#$ Allowing HTTP (port 80) connections...\n")
