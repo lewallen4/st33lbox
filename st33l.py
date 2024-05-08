@@ -4,7 +4,7 @@ def harden_vm():
     log_file = "logs.log"
     with open(log_file, "a") as f:
         f.write("#$#$#$#$#$ Resetting firewall rules...\n")
-    result = subprocess.run(["ufw", "reset", "--force"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    result = subprocess.run(["ufw", "reset"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     with open(log_file, "a") as f:
         f.write(result.stdout + "\n")
         f.write("#$#$#$#$#$ Successfully reset firewall rules.\n")
