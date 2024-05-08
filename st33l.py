@@ -8,6 +8,9 @@ def harden_vm():
     with open(log_file, "a") as f:
         f.write(result.stdout + "\n")
         f.write("#$#$#$#$#$ Successfully reset firewall rules.\n")
+        
+    # Echo "y" into the subprocess standard input to automatically confirm the reset
+    result = subprocess.run(["echo", "y", "|", "ufw", "reset", "--force"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
 
     with open(log_file, "a") as f:
         f.write("#$#$#$#$#$ Denying all incoming connections by default...\n")
