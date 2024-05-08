@@ -1,31 +1,35 @@
 import subprocess
 
 def harden_vm():
-    print("Resetting firewall rules...")
+    log_file = "logs.log"
+    with open(log_file, "a") as f:
+        f.write("#$#$#$#$#$ Resetting firewall rules...\n")
     subprocess.run(["ufw", "reset", "--force"])
-    print("Firewall rules reset.")
+    with open(log_file, "a") as f:
+        f.write("#$#$#$#$#$ Firewall rules reset.\n")
 
-    print("Denying all incoming connections by default...")
     subprocess.run(["ufw", "default", "deny", "incoming"])
-    print("Incoming connections denied.")
+    with open(log_file, "a") as f:
+        f.write("#$#$#$#$#$ Incoming connections denied.\n")
 
-    print("Allowing SSH (port 22) connections...")
     subprocess.run(["ufw", "allow", "22"])
-    print("SSH connections allowed.")
+    with open(log_file, "a") as f:
+        f.write("#$#$#$#$#$ SSH connections allowed.\n")
 
-    print("Allowing HTTP (port 80) connections...")
     subprocess.run(["ufw", "allow", "80"])
-    print("HTTP connections allowed.")
+    with open(log_file, "a") as f:
+        f.write("#$#$#$#$#$ HTTP connections allowed.\n")
 
-    print("Allowing HTTPS (port 443) connections...")
     subprocess.run(["ufw", "allow", "443"])
-    print("HTTPS connections allowed.")
+    with open(log_file, "a") as f:
+        f.write("#$#$#$#$#$ HTTPS connections allowed.\n")
 
-    print("Enabling firewall...")
     subprocess.run(["ufw", "enable"])
-    print("Firewall enabled.")
+    with open(log_file, "a") as f:
+        f.write("#$#$#$#$#$ Firewall enabled.\n")
 
-    print("Firewall hardened successfully.")
+    with open(log_file, "a") as f:
+        f.write("#$#$#$#$#$ Firewall hardened successfully.\n")
 
 if __name__ == "__main__":
     harden_vm()
