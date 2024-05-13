@@ -7,8 +7,8 @@ echo ""
 echo ""
 echo ""
 echo "first login as sudo"
-sudo apt-get install ufw
-echo "installing ufw"
+sudo apt-get install firewalld
+echo "installing firewalld"
 echo "launching script"
 sudo python3 st33l.py
 echo "bye!"
