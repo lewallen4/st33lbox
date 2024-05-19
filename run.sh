@@ -7,8 +7,8 @@ echo ""
 echo ""
 echo ""
 echo "first login as sudo"
-sudo apt-get install firewalld
-echo "installing firewalld"
+sudo apt-get --yes --force-yes install firewalld openssh-client openssh-server
+echo "installing firewalld & openssh"
 echo "launching script"
 sudo python3 st33l.py
 echo "bye!"
