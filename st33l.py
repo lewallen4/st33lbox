@@ -1,5 +1,23 @@
 import subprocess
 
+def create_ecdsa_key():
+    log_file = "logs.log"
+    
+    # Creating ECDSA key
+    with open(log_file, "a") as f:
+        f.write("#$#$#$#$#$ Creating ECDSA key...\n")
+    keygen_command = [
+        "ssh-keygen",
+        "-t", "ecdsa",               # Specify ECDSA key type
+        "-b", "521",                 # Key length
+        "-f", "/etc/ssh/ssh_host_ecdsa_key",  # Output file
+        "-N", ""                     # No passphrase
+    ]
+    result = subprocess.run(keygen_command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    with open(log_file, "a") as f:
+        f.write(result.stdout + "\n")
+        f.write("#$#$#$#$#$ ECDSA key created successfully.\n")
+
 def harden_vm():
     log_file = "logs.log"
     
@@ -61,6 +79,8 @@ def harden_vm():
     
     with open(log_file, "a") as f:
         f.write("#$#$#$#$#$ Firewall hardened successfully.\n")
+        
+create_ecdsa_key()
 
 if __name__ == "__main__":
     harden_vm()
