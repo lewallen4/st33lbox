@@ -26,13 +26,12 @@ def is_ssh_connection():
     return "SSH_CONNECTION" in os.environ
 
 def reconnect_ssh(new_key_path):
-    # Assuming the user has 'root', you might want to adjust the username and hostname
-    user = "grackle"
-    hostname = "image"
+    user = "root"
+    hostname = "localhost"
     
     # Add new key to the known hosts
-    subprocess.run(["ssh-keygen", "-R", hostname])  # Remove old key
-    subprocess.run(["ssh-keyscan", "-H", hostname], stdout=open(os.path.expanduser("~/.ssh/known_hosts"), "a"))
+    subprocess.run(["ssh-keygen", "-R", hostname], check=True)  # Remove old key
+    subprocess.run(["ssh-keyscan", "-H", hostname], stdout=open(os.path.expanduser("~/.ssh/known_hosts"), "a"), check=True)
 
     # Reconnect using the new ECDSA key
     ssh_command = f"ssh -i {new_key_path} {user}@{hostname} 'echo Reconnected successfully with ECDSA key'"
@@ -48,10 +47,13 @@ def delete_old_keys(new_key_path):
     
     for key_file in os.listdir(key_dir):
         if key_file != new_key_name and key_file.startswith("ssh_host_") and key_file.endswith("_key"):
-            os.remove(os.path.join(key_dir, key_file))
-            os.remove(os.path.join(key_dir, key_file + ".pub"))  # Remove corresponding public key
-            with open("logs.log", "a") as f:
-                f.write(f"#$#$#$#$#$ Deleted old key: {key_file}\n")
+            try:
+                os.remove(os.path.join(key_dir, key_file))
+                os.remove(os.path.join(key_dir, key_file + ".pub"))  # Remove corresponding public key
+                with open("logs.log", "a") as f:
+                    f.write(f"#$#$#$#$#$ Deleted old key: {key_file}\n")
+            except FileNotFoundError:
+                continue
 
 def harden_vm():
     log_file = "logs.log"
@@ -121,6 +123,5 @@ if __name__ == "__main__":
     
     if is_ssh_connection():
         reconnect_ssh(ecdsa_key_path)
-        delete_old_keys(ecdsa_key_path)
     
     harden_vm()
