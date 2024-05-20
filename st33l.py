@@ -13,6 +13,8 @@ def create_ecdsa_key():
     # Creating ECDSA key
     with open(log_file, "a") as f:
         f.write("#$#$#$#$#$ Creating ECDSA key...\n")
+        f.write(f"Command: ssh-keygen -t ecdsa -b 521 -f {key_path} -N '' -q\n")
+
     keygen_command = [
         "ssh-keygen",
         "-t", "ecdsa",               # Specify ECDSA key type
@@ -21,15 +23,24 @@ def create_ecdsa_key():
         "-N", "",                    # No passphrase
         "-q"                         # Quiet mode
     ]
-    result = subprocess.run(keygen_command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-    
-    with open(log_file, "a") as f:
-        f.write(result.stdout + "\n")
-        if result.returncode == 0:
-            f.write("#$#$#$#$#$ ECDSA key created successfully.\n")
-        else:
-            f.write("#$#$#$#$#$ Error creating ECDSA key.\n")
-    
+
+    try:
+        result = subprocess.run(keygen_command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=30)
+        with open(log_file, "a") as f:
+            f.write(result.stdout + "\n")
+            if result.returncode == 0:
+                f.write("#$#$#$#$#$ ECDSA key created successfully.\n")
+            else:
+                f.write(f"#$#$#$#$#$ Error creating ECDSA key. Return code: {result.returncode}\n")
+    except subprocess.TimeoutExpired:
+        with open(log_file, "a") as f:
+            f.write("#$#$#$#$#$ ssh-keygen command timed out.\n")
+        raise
+    except Exception as e:
+        with open(log_file, "a") as f:
+            f.write(f"#$#$#$#$#$ Exception occurred: {str(e)}\n")
+        raise
+
     return key_path
 
 def is_ssh_connection():
