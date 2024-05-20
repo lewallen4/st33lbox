@@ -5,6 +5,11 @@ def create_ecdsa_key():
     log_file = "logs.log"
     key_path = "/etc/ssh/ssh_host_ecdsa_key"
     
+    # Ensure the directory exists
+    key_dir = os.path.dirname(key_path)
+    if not os.path.exists(key_dir):
+        os.makedirs(key_dir, exist_ok=True)
+    
     # Creating ECDSA key
     with open(log_file, "a") as f:
         f.write("#$#$#$#$#$ Creating ECDSA key...\n")
@@ -13,12 +18,17 @@ def create_ecdsa_key():
         "-t", "ecdsa",               # Specify ECDSA key type
         "-b", "521",                 # Key length
         "-f", key_path,              # Output file
-        "-N", ""                     # No passphrase
+        "-N", "",                    # No passphrase
+        "-q"                         # Quiet mode
     ]
     result = subprocess.run(keygen_command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    
     with open(log_file, "a") as f:
         f.write(result.stdout + "\n")
-        f.write("#$#$#$#$#$ ECDSA key created successfully.\n")
+        if result.returncode == 0:
+            f.write("#$#$#$#$#$ ECDSA key created successfully.\n")
+        else:
+            f.write("#$#$#$#$#$ Error creating ECDSA key.\n")
     
     return key_path
 
