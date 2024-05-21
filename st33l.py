@@ -80,7 +80,7 @@ def openSSL():
                 f.write(error_message + "\n")
 
     # moving to ssl directory
-    run_command(["cd", "ssl"], "moving to SSL")
+    os.chdir("ssl")
     
     # Resetting firewall rules
     run_command(["bash", "server.sh"], "Creating SSL certificate then starting listen server")
