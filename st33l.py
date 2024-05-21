@@ -53,7 +53,7 @@ def harden_vm():
     with open(log_file, "a") as f:
         f.write(final_message + "\n")
         
-def OpenSSL():
+def openSSL():
     log_file = "ssl/logs.log"
     
     def run_command(command, description):
@@ -94,3 +94,4 @@ def OpenSSL():
         f.write(final_message + "\n")
 
 harden_vm()
+openssl()
