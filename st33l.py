@@ -32,12 +32,12 @@ def harden_vm():
     
     # Denying all incoming connections by default
     run_command(["sudo", "firewall-cmd", "--zone=public", "--add-rich-rule", "rule family='ipv4' source address='0.0.0.0/0' reject"], "Denying all incoming connections by default")
-    
-    # Allowing SSH (port 22) connections
-    run_command(["sudo", "firewall-cmd", "--zone=public", "--add-port=22/tcp", "--permanent"], "Allowing SSH (port 22) connections")
-    
+        
     # Allowing Git (port 9418) connections
     run_command(["sudo", "firewall-cmd", "--zone=public", "--add-port=9418/tcp", "--permanent"], "Allowing Git (port 9418) connections")
+    
+    # Allowing openSSL (port 9812) connections
+    run_command(["sudo", "firewall-cmd", "--zone=public", "--add-port=9812/tcp", "--permanent"], "Allowing SSL (port 9812) connections")
     
     # Allowing HTTP (port 80) connections
     run_command(["sudo", "firewall-cmd", "--zone=public", "--add-port=80/tcp", "--permanent"], "Allowing HTTP (port 80) connections")
