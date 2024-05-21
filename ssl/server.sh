@@ -4,13 +4,13 @@
 if [ ! -f server.pem ]; then
   echo "Generating self-signed certificate..."
   openssl req -new -x509 -keyout server.pem -out server.pem -days 365 -nodes <<EOF
-null
-null
-null
-null
-null
-null
-null
+
+
+
+
+
+
+
 EOF
 fi
 
