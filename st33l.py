@@ -94,4 +94,4 @@ def openSSL():
         f.write(final_message + "\n")
 
 harden_vm()
-openssl()
+openSSL()
