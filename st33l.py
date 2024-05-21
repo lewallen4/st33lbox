@@ -2,7 +2,7 @@ import os
 import subprocess
 
 def harden_vm():
-    log_file = "logs.log"
+    log_file = "/firewall/logs.log"
     
     def run_command(command, description):
         message = f"#$#$#$#$#$ {description}..."
@@ -49,6 +49,46 @@ def harden_vm():
     run_command(["sudo", "firewall-cmd", "--reload"], "Enabling firewall")
     
     final_message = "#$#$#$#$#$ Firewall hardened successfully."
+    print(final_message)
+    with open(log_file, "a") as f:
+        f.write(final_message + "\n")
+        
+def OpenSSL():
+    log_file = "/ssl/logs.log"
+    
+    def run_command(command, description):
+        message = f"#$#$#$#$#$ {description}..."
+        print(message)
+        with open(log_file, "a") as f:
+            f.write(message + "\n")
+        
+        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        
+        print(result.stdout)
+        with open(log_file, "a") as f:
+            f.write(result.stdout + "\n")
+        
+        if result.returncode == 0:
+            success_message = f"#$#$#$#$#$ {description} successful."
+            print(success_message)
+            with open(log_file, "a") as f:
+                f.write(success_message + "\n")
+        else:
+            error_message = f"#$#$#$#$#$ {description} failed. Error: {result.stderr}"
+            print(error_message)
+            with open(log_file, "a") as f:
+                f.write(error_message + "\n")
+
+    # moving to ssl directory
+    run_command(["cd", "ssl"], "moving to SSL")
+    
+    # Resetting firewall rules
+    run_command(["bash", "server.sh"], "Creating SSL certificate then starting listen server")
+    
+    # Resetting firewall rules
+    run_command(["echo", "'open'"], "Opening SSL tunnel")
+        
+    final_message = "#$#$#$#$#$ Server Online"
     print(final_message)
     with open(log_file, "a") as f:
         f.write(final_message + "\n")
