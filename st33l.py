@@ -4,64 +4,53 @@ import subprocess
 def harden_vm():
     log_file = "logs.log"
     
+    def run_command(command, description):
+        message = f"#$#$#$#$#$ {description}..."
+        print(message)
+        with open(log_file, "a") as f:
+            f.write(message + "\n")
+        
+        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        
+        print(result.stdout)
+        with open(log_file, "a") as f:
+            f.write(result.stdout + "\n")
+        
+        if result.returncode == 0:
+            success_message = f"#$#$#$#$#$ {description} successful."
+            print(success_message)
+            with open(log_file, "a") as f:
+                f.write(success_message + "\n")
+        else:
+            error_message = f"#$#$#$#$#$ {description} failed. Error: {result.stderr}"
+            print(error_message)
+            with open(log_file, "a") as f:
+                f.write(error_message + "\n")
+
     # Resetting firewall rules
-    with open(log_file, "a") as f:
-        f.write("#$#$#$#$#$ Resetting firewall rules...\n")
-    result = subprocess.run(["sudo", "firewall-cmd", "--complete-reload"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-    with open(log_file, "a") as f:
-        f.write(result.stdout + "\n")
-        f.write("#$#$#$#$#$ Successfully reset firewall rules.\n")
+    run_command(["sudo", "firewall-cmd", "--complete-reload"], "Resetting firewall rules")
     
     # Denying all incoming connections by default
-    with open(log_file, "a") as f:
-        f.write("#$#$#$#$#$ Denying all incoming connections by default...\n")
-    result = subprocess.run(["sudo", "firewall-cmd", "--zone=public", "--add-rich-rule", "rule family='ipv4' source address='0.0.0.0/0' reject"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-    with open(log_file, "a") as f:
-        f.write(result.stdout + "\n")
-        f.write("#$#$#$#$#$ Incoming connections denied.\n")
+    run_command(["sudo", "firewall-cmd", "--zone=public", "--add-rich-rule", "rule family='ipv4' source address='0.0.0.0/0' reject"], "Denying all incoming connections by default")
     
     # Allowing SSH (port 22) connections
-    with open(log_file, "a") as f:
-        f.write("#$#$#$#$#$ Allowing SSH (port 22) connections...\n")
-    result = subprocess.run(["sudo", "firewall-cmd", "--zone=public", "--add-port=22/tcp", "--permanent"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-    with open(log_file, "a") as f:
-        f.write(result.stdout + "\n")
-        f.write("#$#$#$#$#$ Incoming SSH connections allowed.\n")
+    run_command(["sudo", "firewall-cmd", "--zone=public", "--add-port=22/tcp", "--permanent"], "Allowing SSH (port 22) connections")
     
     # Allowing Git (port 9418) connections
-    with open(log_file, "a") as f:
-        f.write("#$#$#$#$#$ Allowing Git (port 9418) connections...\n")
-    result = subprocess.run(["sudo", "firewall-cmd", "--zone=public", "--add-port=9418/tcp", "--permanent"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-    with open(log_file, "a") as f:
-        f.write(result.stdout + "\n")
-        f.write("#$#$#$#$#$ Incoming Git connections allowed.\n")
+    run_command(["sudo", "firewall-cmd", "--zone=public", "--add-port=9418/tcp", "--permanent"], "Allowing Git (port 9418) connections")
     
     # Allowing HTTP (port 80) connections
-    with open(log_file, "a") as f:
-        f.write("#$#$#$#$#$ Allowing HTTP (port 80) connections...\n")
-    result = subprocess.run(["sudo", "firewall-cmd", "--zone=public", "--add-port=80/tcp", "--permanent"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-    with open(log_file, "a") as f:
-        f.write(result.stdout + "\n")
-        f.write("#$#$#$#$#$ Incoming HTTP connections allowed.\n")
+    run_command(["sudo", "firewall-cmd", "--zone=public", "--add-port=80/tcp", "--permanent"], "Allowing HTTP (port 80) connections")
     
     # Allowing HTTPS (port 443) connections
-    with open(log_file, "a") as f:
-        f.write("#$#$#$#$#$ Allowing HTTPS (port 443) connections...\n")
-    result = subprocess.run(["sudo", "firewall-cmd", "--zone=public", "--add-port=443/tcp", "--permanent"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-    with open(log_file, "a") as f:
-        f.write(result.stdout + "\n")
-        f.write("#$#$#$#$#$ Incoming HTTPS connections allowed.\n")
+    run_command(["sudo", "firewall-cmd", "--zone=public", "--add-port=443/tcp", "--permanent"], "Allowing HTTPS (port 443) connections")
     
     # Enabling firewall
-    with open(log_file, "a") as f:
-        f.write("#$#$#$#$#$ Enabling firewall...\n")
-    result = subprocess.run(["sudo", "firewall-cmd", "--reload"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-    with open(log_file, "a") as f:
-        f.write(result.stdout + "\n")
-        f.write("#$#$#$#$#$ Firewall enabled.\n")
+    run_command(["sudo", "firewall-cmd", "--reload"], "Enabling firewall")
     
+    final_message = "#$#$#$#$#$ Firewall hardened successfully."
+    print(final_message)
     with open(log_file, "a") as f:
-        f.write("#$#$#$#$#$ Firewall hardened successfully.\n")
+        f.write(final_message + "\n")
 
-    
-    harden_vm()
+harden_vm()
