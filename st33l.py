@@ -2,7 +2,7 @@ import os
 import subprocess
 
 def harden_vm():
-    log_file = "/firewall/logs.log"
+    log_file = "firewall/logs.log"
     
     def run_command(command, description):
         message = f"#$#$#$#$#$ {description}..."
@@ -54,7 +54,7 @@ def harden_vm():
         f.write(final_message + "\n")
         
 def OpenSSL():
-    log_file = "/ssl/logs.log"
+    log_file = "ssl/logs.log"
     
     def run_command(command, description):
         message = f"#$#$#$#$#$ {description}..."
