@@ -1,81 +1,6 @@
 import os
 import subprocess
 
-def create_ecdsa_key():
-    log_file = "logs.log"
-    key_path = "/etc/ssh/ssh_host_ecdsa_key"
-    
-    # Ensure the directory exists
-    key_dir = os.path.dirname(key_path)
-    if not os.path.exists(key_dir):
-        os.makedirs(key_dir, exist_ok=True)
-    
-    # Creating ECDSA key
-    with open(log_file, "a") as f:
-        f.write("#$#$#$#$#$ Creating ECDSA key...\n")
-        f.write(f"Command: ssh-keygen -t ecdsa -b 521 -f {key_path} -N '' -q\n")
-
-    keygen_command = [
-        "ssh-keygen",
-        "-t", "ecdsa",               # Specify ECDSA key type
-        "-b", "521",                 # Key length
-        "-f", key_path,              # Output file
-        "-N", "",                    # No passphrase
-        "-q"                         # Quiet mode
-    ]
-
-    try:
-        result = subprocess.run(keygen_command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=30)
-        with open(log_file, "a") as f:
-            f.write(result.stdout + "\n")
-            if result.returncode == 0:
-                f.write("#$#$#$#$#$ ECDSA key created successfully.\n")
-            else:
-                f.write(f"#$#$#$#$#$ Error creating ECDSA key. Return code: {result.returncode}\n")
-    except subprocess.TimeoutExpired:
-        with open(log_file, "a") as f:
-            f.write("#$#$#$#$#$ ssh-keygen command timed out.\n")
-        raise
-    except Exception as e:
-        with open(log_file, "a") as f:
-            f.write(f"#$#$#$#$#$ Exception occurred: {str(e)}\n")
-        raise
-
-    return key_path
-
-def is_ssh_connection():
-    return "SSH_CONNECTION" in os.environ
-
-def reconnect_ssh(new_key_path):
-    user = "root"
-    hostname = "localhost"
-    
-    # Add new key to the known hosts
-    subprocess.run(["ssh-keygen", "-R", hostname], check=True)  # Remove old key
-    subprocess.run(["ssh-keyscan", "-H", hostname], stdout=open(os.path.expanduser("~/.ssh/known_hosts"), "a"), check=True)
-
-    # Reconnect using the new ECDSA key
-    ssh_command = f"ssh -i {new_key_path} {user}@{hostname} 'echo Reconnected successfully with ECDSA key'"
-    result = subprocess.run(ssh_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-    
-    with open("logs.log", "a") as f:
-        f.write(result.stdout + "\n")
-        f.write("#$#$#$#$#$ Reconnected successfully with ECDSA key.\n")
-
-def delete_old_keys(new_key_path):
-    key_dir = os.path.dirname(new_key_path)
-    new_key_name = os.path.basename(new_key_path)
-    
-    for key_file in os.listdir(key_dir):
-        if key_file != new_key_name and key_file.startswith("ssh_host_") and key_file.endswith("_key"):
-            try:
-                os.remove(os.path.join(key_dir, key_file))
-                os.remove(os.path.join(key_dir, key_file + ".pub"))  # Remove corresponding public key
-                with open("logs.log", "a") as f:
-                    f.write(f"#$#$#$#$#$ Deleted old key: {key_file}\n")
-            except FileNotFoundError:
-                continue
-
 def harden_vm():
     log_file = "logs.log"
     
@@ -138,11 +63,5 @@ def harden_vm():
     with open(log_file, "a") as f:
         f.write("#$#$#$#$#$ Firewall hardened successfully.\n")
 
-if __name__ == "__main__":
-    ecdsa_key_path = create_ecdsa_key()
-    delete_old_keys(ecdsa_key_path)
-    
-    if is_ssh_connection():
-        reconnect_ssh(ecdsa_key_path)
     
     harden_vm()
