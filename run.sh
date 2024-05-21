@@ -18,4 +18,3 @@ echo ""
 echo ""
 echo ""
 echo ""
-cd ..
