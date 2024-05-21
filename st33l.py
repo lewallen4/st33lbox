@@ -83,7 +83,7 @@ def openSSL():
     os.chdir("ssl")
     
     # Resetting firewall rules
-    run_command(["bash", "server.sh"], "Creating SSL certificate then starting listen server")
+    run_command(["sudo", "bash", "server.sh"], "Creating SSL certificate then starting listen server")
     
     # Resetting firewall rules
     run_command(["echo", "'open'"], "Opening SSL tunnel")
