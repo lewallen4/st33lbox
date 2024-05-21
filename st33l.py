@@ -45,6 +45,9 @@ def harden_vm():
     # Allowing HTTPS (port 443) connections
     run_command(["sudo", "firewall-cmd", "--zone=public", "--add-port=443/tcp", "--permanent"], "Allowing HTTPS (port 443) connections")
     
+    # TEMP Allowing SSH (port 22) connections
+    run_command(["sudo", "firewall-cmd", "--zone=public", "--add-port=22/tcp", "--permanent"], "Allowing HTTP (port 22) connections")
+    
     # Enabling firewall
     run_command(["sudo", "firewall-cmd", "--reload"], "Enabling firewall")
     
