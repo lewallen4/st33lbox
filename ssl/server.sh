@@ -14,18 +14,23 @@ if [ ! -f server.pem ]; then
 EOF
 fi
 
+# Extract the public key from the server's certificate
+echo "Extracting public key from server certificate..."
+openssl x509 -pubkey -noout -in server.pem > server_pubkey.pem
+
 # Start OpenSSL server in the background
 echo "Starting OpenSSL server..."
 # Use `stdbuf -i0 -o0 -e0` to make sure the I/O is not buffered
-(stdbuf -i0 -o0 -e0 openssl s_server -quiet -key server.pem -cert server.pem -port 9812) &
+(stdbuf -i0 -o0 -e0 openssl s_server -quiet -key server.pem -cert server.pem -port 9812 | \
+while IFS= read -r line; do
+  if [[ "$line" == "GET_PUBLIC_KEY" ]]; then
+    echo "Sending public key to client..."
+    cat server_pubkey.pem
+    echo "PUBLIC_KEY_SENT"
+  else
+    echo "$line"
+  fi
+done) &
 
 # Wait for the server to start
 sleep 2
-
-# Connect to the server from the client
-echo "Connecting to OpenSSL server..."
-# Use `-ign_eof` to ensure the connection doesn't close
-openssl s_client -connect localhost:9812 -quiet -ign_eof
-
-# Provide a shell on the server side
-/bin/sh -i
