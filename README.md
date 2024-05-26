@@ -9,10 +9,9 @@ Project Overview
 
 st33lbox sets up a secure VM environment by:
 
-    Installing essential security tools like firewalld and openssh.
-    *currently* Generating a secure ECDSA key for SSH.
+    Installing essential security tools like firewalld and openssl.
+    eventually making a quantum ready tunnel.
     Configuring the firewall to allow only necessary ports and block all others.
-    Automatically reconnecting the SSH session with the newly generated ECDSA key.
     Ensuring your VM is hardened and ready to defend against potential threats.
 
 <b><h3>Getting Started</b></h3>
